@@ -15,5 +15,8 @@ router.route("/:id")
     .get(contact.findOne)
     .put(contact.update)
     .delete(contact.delete);
-
+    
+router.route("/login")
+    .get(contact.login);
+    
 module.exports = router;

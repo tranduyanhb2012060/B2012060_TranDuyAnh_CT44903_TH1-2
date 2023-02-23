@@ -12,13 +12,9 @@ exports.create = async (req, res, next) => {
         const document = await contactService.create(req.body);
         return res.send(document);
     } catch (error) {
-        return next(
-            new ApiError(500, "An error occurred while creating the contact")
-        );
+        return next(new ApiError(500, "An error occurred while creating the contact"));
     }
 };
-
-
 
 exports.findAll = async (req, res, next) => {
     let documents = [];
@@ -38,8 +34,6 @@ exports.findAll = async (req, res, next) => {
     return res.send(documents);
 };
 
-
-
 exports.findOne = async (req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
@@ -54,8 +48,6 @@ exports.findOne = async (req, res, next) => {
         );
     }
 };
-
-
 
 exports.update = async (req, res, next) => {
     if (Object.keys(req.body).length === 0) {
@@ -76,9 +68,6 @@ exports.update = async (req, res, next) => {
     }
 };
 
-
-
-
 exports.delete = async (req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
@@ -95,8 +84,6 @@ exports.delete = async (req, res, next) => {
     }
 };
 
-
-
 exports.deleteAll = async (_req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
@@ -111,7 +98,6 @@ exports.deleteAll = async (_req, res, next) => {
     }
 };
 
-
 exports.findAllFavorite = async (_req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
@@ -122,5 +108,37 @@ exports.findAllFavorite = async (_req, res, next) => {
             new ApiError(500, "An error occurred while retrieving favorite contacts")
         );
 
+    }
+};
+
+//Login
+exports.login = async (req, res, next) => {
+    const { email, password } = req.body;
+  
+    if (!email || !password) {
+      return next(new ApiError(400, "Email and password are required"));
+    }
+  
+    try {
+      const userService = new UserService(MongoDB.client);
+      const user = await userService.findByEmail(email);
+  
+      if (!user) {
+        return next(new ApiError(401, "Invalid email or password"));
+      }
+  
+      if (!await user.checkPassword(password)) {
+        return next(new ApiError(401, "Invalid email or password"));
+      }
+  
+      const token = jwt.sign(
+        { userId: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+  
+      res.send({ token });
+    } catch (error) {
+      return next(new ApiError(500, "An error occurred while logging in"));
     }
 };
