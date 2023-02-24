@@ -10,7 +10,7 @@ exports.create = async (req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
         const document = await contactService.create(req.body);
-        return res.send(document);
+        return res.send(document);   
     } catch (error) {
         return next(new ApiError(500, "An error occurred while creating the contact"));
     }
@@ -120,8 +120,8 @@ exports.login = async (req, res, next) => {
     }
   
     try {
-      const userService = new UserService(MongoDB.client);
-      const user = await userService.findByEmail(email);
+      const contactService = new ContactService(MongoDB.client);
+      const user = await contactService.findByEmail(email);
   
       if (!user) {
         return next(new ApiError(401, "Invalid email or password"));
@@ -142,3 +142,4 @@ exports.login = async (req, res, next) => {
       return next(new ApiError(500, "An error occurred while logging in"));
     }
 };
+

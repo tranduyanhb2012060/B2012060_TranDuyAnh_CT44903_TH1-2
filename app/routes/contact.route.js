@@ -17,6 +17,5 @@ router.route("/:id")
     .delete(contact.delete);
     
 router.route("/login")
-    .get(contact.login);
-    
+    .post(contact.login);
 module.exports = router;

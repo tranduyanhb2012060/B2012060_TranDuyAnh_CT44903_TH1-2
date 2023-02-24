@@ -79,5 +79,10 @@ class ContactService {
         const result = await this.Contact.deleteMany({});
         return result.deletedCount;
     }
+    async findByEmail(email) {
+        const user = await this.db.collection("User").findOne({ email });
+        return user;
+    }
+    
 }
 module.exports = ContactService;
